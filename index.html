@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Horario de Clases</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Generador de Horario de Clases</h1>
+
+<form id="classForm">
+    <label for="subject">Asignatura:</label>
+    <input type="text" id="subject" required>
+
+    <label for="professor">Profesor:</label>
+    <input type="text" id="professor" required>
+
+    <label for="duration">Duración de los turnos (en horas):</label>
+    <input type="number" id="duration" required>
+
+    <label for="frequency">Frecuencia semanal:</label>
+    <input type="number" id="frequency" required>
+
+    <button type="button" onclick="addSubject()">Agregar Asignatura</button>
+</form>
+
+<div id="schedule">
+    <h2>Horario de Clases</h2>
+    <ul id="scheduleList"></ul>
+    <button onclick="generateOptimalSchedule()">Generar Horario Óptimo</button>
+</div>
+
+<script src="schedule.js"></script>
+</body>
+</html>
