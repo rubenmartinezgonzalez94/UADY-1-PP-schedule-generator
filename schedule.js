@@ -128,3 +128,4 @@ function displayOptimalSchedule(timetable) {
 
 // Ejemplo de uso
 const scheduleGenerator = new ScheduleGenerator();
+console.log("Debugeando")
