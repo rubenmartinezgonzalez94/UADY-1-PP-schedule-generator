@@ -9,6 +9,36 @@
 <body>
 <h1>Generador de Horario de Clases</h1>
 
+<form id="personForm">
+    <label for="personName">Nombre:</label>
+    <input type="text" id="personName" required>
+
+    <label for="personSex">Sexo:</label>
+    <input type="text" id="personSex" required>
+
+    <label for="personAge">Edad:</label>
+    <input type="number" id="personAge" required>
+
+    <label for="personType">Tipo:</label>
+    <select id="personType" onchange="toggleFields()">
+        <option value="professor">Profesor</option>
+        <option value="student">Estudiante</option>
+    </select>
+
+    <div id="professorFields" style="display: none;">
+        <label for="category">Categoría:</label>
+        <input type="text" id="category">
+    </div>
+
+    <div id="studentFields" style="display: none;">
+        <label for="average">Promedio:</label>
+        <input type="number" id="average">
+    </div>
+
+    <button type="button" onclick="addPerson()">Agregar Persona</button>
+</form>
+
+
 <form id="classForm">
     <label for="subject">Asignatura:</label>
     <input type="text" id="subject" required>
@@ -25,12 +55,22 @@
     <button type="button" onclick="addSubject()">Agregar Asignatura</button>
 </form>
 
+<div id="peopleList">
+    <h2>Lista de Personas</h2>
+    <ul id="professorsList">
+        <!-- Aquí se mostrarán los profesores -->
+    </ul>
+    <ul id="studentsList">
+        <!-- Aquí se mostrarán los estudiantes -->
+    </ul>
+</div>
+
 <div id="schedule">
     <h2>Horario de Clases</h2>
     <ul id="scheduleList"></ul>
     <ul id="timetableList"></ul> <!-- Nueva lista para mostrar el horario -->
     <div id="timetableChart"></div>
-    <button onclick="generateOptimalSchedule()">Generar Horario Óptimo</button>
+    <button onclick="generateOptimalSchedule()">Generar Horario</button>
 </div>
 
 

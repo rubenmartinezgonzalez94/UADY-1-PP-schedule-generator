@@ -1,11 +1,36 @@
-//test commit ruben
-// Clase Asignatura
+//--------------------------------------------------------------------------------------(Paradigma Orientado a Objetos)
+// Clase Asignatura (Orientado a Objetos)
+class Person {
+    constructor(name, sex, age) {
+        this.name = name;
+        this.sex = sex;
+        this.age = age;
+    }
+}
+class Professor extends Person {
+    constructor(name, sex, age, category) {
+        super(name, sex, age);
+        this.category = category;
+    }
+}
+
+class Student extends Person {
+    constructor(name, sex, age, average) {
+        super(name, sex, age);
+        this.average = average;
+    }
+}
 class Subject {
     constructor(name, professor, duration, frequency) {
         this.name = name;
         this.professor = professor;
         this.duration = duration;
         this.frequency = frequency;
+        this.students = [];
+    }
+
+    addStudent(student) {
+        this.students.push(student);
     }
 }
 
@@ -22,7 +47,7 @@ class ScheduleGenerator {
     }
 
     // Método para generar el horario óptimo (Orientado a Objetos)
-    generateOptimalSchedule() {
+    generateSchedule() {
         const timetable = [];
         const sortedSubjects = this.schedule.sort((a, b) => b.duration - a.duration);
 
@@ -80,7 +105,7 @@ class ScheduleGenerator {
         }
     }
 }
-
+//--------------------------------------------------------------------------------------------(Paradigma Funcional)
 // Función para agregar una asignatura al horario (Paradigma Funcional)
 function addSubject() {
     const subjectInput = document.getElementById('subject');
@@ -121,10 +146,9 @@ function displaySubject(subject) {
 
 // Función para generar el horario óptimo (Paradigma Funcional)
 function generateOptimalSchedule() {
-    scheduleGenerator.generateOptimalSchedule();
+    scheduleGenerator.generateSchedule();
 }
 
-// Función para mostrar el horario óptimo en la interfaz (Paradigma Funcional)
 // Función para mostrar el horario óptimo en la interfaz (Paradigma Funcional)
 function displayOptimalSchedule(timetable) {
     const scheduleList = document.getElementById('scheduleList');
@@ -161,6 +185,63 @@ function displayOptimalSchedule(timetable) {
     // Agrega la tabla al contenedor del diagrama de Gantt
     timetableChart.appendChild(table);
 }
+function toggleFields() {
+    const personType = document.getElementById('personType').value;
+    const professorFields = document.getElementById('professorFields');
+    const studentFields = document.getElementById('studentFields');
+
+    if (personType === 'professor') {
+        professorFields.style.display = 'block';
+        studentFields.style.display = 'none';
+    } else if (personType === 'student') {
+        professorFields.style.display = 'none';
+        studentFields.style.display = 'block';
+    }
+}
+
+function addPerson() {
+    const personNameInput = document.getElementById('personName');
+    const personSexInput = document.getElementById('personSex');
+    const personAgeInput = document.getElementById('personAge');
+    const personType = document.getElementById('personType').value;
+
+    const name = personNameInput.value;
+    const sex = personSexInput.value;
+    const age = parseInt(personAgeInput.value);
+
+    let newPerson;
+
+    if (personType === 'professor') {
+        const categoryInput = document.getElementById('category');
+        const category = categoryInput.value;
+        newPerson = new Professor(name, sex, age, category);
+        displayPerson(newPerson, 'professorsList');
+    } else if (personType === 'student') {
+        const averageInput = document.getElementById('average');
+        const average = parseFloat(averageInput.value);
+        newPerson = new Student(name, sex, age, average);
+        displayPerson(newPerson, 'studentsList');
+    }
+}
+
+function displayPerson(person, listId) {
+    const peopleList = document.getElementById(listId);
+    const listItem = document.createElement('li');
+    let additionalInfo = '';
+
+    listItem.textContent = `Nombre: ${person.name} - Edad: ${person.age} - Sexo: ${person.sex}`;
+
+    if (person instanceof Professor) {
+        additionalInfo += ` - Profesor - Categoría: ${person.category}`;
+    } else if (person instanceof Student) {
+        additionalInfo += ` - Estudiante - Promedio: ${person.average}`;
+    }
+
+    listItem.textContent += additionalInfo;
+    peopleList.appendChild(listItem);
+}
+
+
 
 // Ejemplo de uso
 const scheduleGenerator = new ScheduleGenerator();
