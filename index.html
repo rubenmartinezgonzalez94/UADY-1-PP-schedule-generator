@@ -14,10 +14,10 @@
 
 <body>
 
-<div class="container mt-5">
+<div class="container mt-5 ml-5 mr-5">
     <h1 class="text-center mb-4">Generador de horario</h1>
     <div class="d-flex flex-row justify-content-between ">
-        <div class="col-md-3 border border-success m-3 p-3" style="background-color: #08f01633">
+        <div class="col-md-3 border border-success m-1 p-3" style="background-color: #08f01633">
             <h4 class="text-center mb-4" >Persona</h4>
             <!-- Person Input -->
             <div class="form-group">
@@ -54,7 +54,7 @@
 
             <button class="btn btn-primary mb-3" onclick="addPerson()">Agregar Persona</button>
         </div>
-        <div class="col-md-3 border border-success m-3 p-3" style="background-color: #08f01633">
+        <div class="col-md-3 border border-success m-1 p-3" style="background-color: #08f01633">
             <h4 class="text-center mb-4">Asignatura</h4>
             <!-- Schedule Input -->
             <div class="form-group">
@@ -77,7 +77,7 @@
             <button class="btn btn-primary mb-3" onclick="addSubject()">Agregar Asignatura</button>
 
         </div>
-        <div class="col-md-4 border border-primary m-3 p-3" style="background-color: #08f01633">
+        <div class="col-md-5 border border-primary m-1 p-3" style="background-color: #15b5c645">
             <h4>Lista de Asignaturas</h4>
             <ul id="scheduleList" class="list-group mt-4">
                 <!-- List of added subjects -->
@@ -92,16 +92,16 @@
                 <!-- List of added students -->
             </ul>
         </div>
-
-    </div>
-    <div>
-        <div class="col-md-6 border border-primary m-3 p-3">
+        <div class="col-md-5 border border-primary m-1 p-3" style="background-color: #15b5c645">
             <!-- Schedule Display -->
             <button class="btn btn-primary mb-3" onclick="generateOptimalSchedule()">Generar Horario</button>
             <div id="timetableChart" class="table-responsive">
                 <!-- Schedule will be displayed here -->
             </div>
         </div>
+    </div>
+    <div>
+
     </div>
 </div>
 
