@@ -131,6 +131,9 @@ function displaySubject(subject) {
 
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Eliminar';
+    //class="btn btn-primary mb-3" in DOMTokenList
+    deleteButton.class = 'btn btn-primary mb-3';
+
     deleteButton.onclick = function () {
         // Lógica para eliminar la asignatura
         const index = scheduleGenerator.schedule.indexOf(subject);
