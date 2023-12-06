@@ -26,7 +26,11 @@
             </div>
             <div class="form-group">
                 <label for="personSex">Sexo:</label>
-                <input type="text" class="form-control" id="personSex">
+                <select class="form-control" id="personSex" required>
+                    <option value="">Seleccionar</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="personAge">Edad:</label>
@@ -62,9 +66,17 @@
                 <input type="text" class="form-control" id="subject">
             </div>
             <div class="form-group">
-                <label for="professor">Profesor:</label>
-                <input type="text" class="form-control" id="professor">
+                <label for="professorSelect">Profesor:</label>
+                <select class="form-control" id="professorSelect">
+                    <!-- Opciones generadas dinámicamente con JavaScript -->
+                </select>
             </div>
+<!--            <div class="form-group">-->
+<!--                <label for="studentsSelect">Estudiantes:</label>-->
+<!--                <select class="form-control" id="studentsSelect" multiple>-->
+<!--                    &lt;!&ndash; Opciones generadas dinámicamente con JavaScript &ndash;&gt;-->
+<!--                </select>-->
+<!--            </div>-->
             <div class="form-group">
                 <label for="duration">Duración (horas):</label>
                 <input type="number" class="form-control" id="duration">
@@ -103,7 +115,7 @@
             <button class="btn btn-primary mb-3" onclick="addSubject()">Agregar Asignatura</button>
 
         </div>
-        <div class="col-md-5 border border-primary m-1 p-3" style="background-color: #15b5c645">
+        <div class="col-md-6 border border-primary m-1 p-3" style="background-color: #15b5c645">
             <h4>Lista de Asignaturas</h4>
             <ul id="scheduleList" class="list-group mt-4">
                 <!-- List of added subjects -->

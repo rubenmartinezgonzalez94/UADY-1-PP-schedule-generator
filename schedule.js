@@ -7,6 +7,7 @@ class Person {
         this.age = age;
     }
 }
+
 class Professor extends Person {
     constructor(name, sex, age, category) {
         super(name, sex, age);
@@ -20,6 +21,7 @@ class Student extends Person {
         this.average = average;
     }
 }
+
 class Subject {
     constructor(name, professor, duration, frequency) {
         this.name = name;
@@ -35,7 +37,7 @@ class Subject {
         this.students.push(student);
     }
 
-    addRestrictions(restriction){
+    addRestrictions(restriction) {
         return this.restrictions;
     }
 }
@@ -47,7 +49,7 @@ class SubjectWithDayRestriction extends Subject {
         this.restrictions = []
     }
 
-    addRestrictions(restriction){
+    addRestrictions(restriction) {
         this.restrictions.push(restriction);
         return this.restrictions;
     }
@@ -85,9 +87,9 @@ class ScheduleGenerator {
         let maximumDailyClasses = 2;
         console.log(classPerDay);
         for (let day = 0; day < 5; day++) { // Supongamos una semana de lunes a viernes
-            if(frequency == subject.frequency) break;
-            if(subject.restrictions && subject.restrictions.includes(day)) continue; //Verifica si el dia se encuentra restringido
-            if(classPerDay[day] && classPerDay[day] >= maximumDailyClasses) continue; // Verifica cuantas clases hay en el dia
+            if (frequency === subject.frequency) break;
+            if (subject.restrictions && subject.restrictions.includes(day)) continue; //Verifica si el dia se encuentra restringido
+            if (classPerDay[day] && classPerDay[day] >= maximumDailyClasses) continue; // Verifica cuantas clases hay en el dia
             for (let hour = 8; hour < 17 - subject.duration + 1; hour++) { // Modificamos el límite a 5 PM
                 if (!this.isSlotOccupied(timetable, day, hour, subject.duration)) {
                     frequency++;
@@ -97,13 +99,13 @@ class ScheduleGenerator {
             }
         }
 
-        if(frequency == subject.frequency){
-            for(let i = 0; i < scheduleDay.length; i++){
+        if (frequency === subject.frequency) {
+            for (let i = 0; i < scheduleDay.length; i++) {
                 this.scheduleClass(timetable, classPerDay, subject, scheduleDay[i][0], scheduleDay[i][1]);
             }
-            
+
             return scheduleDay;
-        } else{
+        } else {
             return -1;
         }
     }
@@ -136,6 +138,7 @@ class ScheduleGenerator {
         }
     }
 }
+
 //--------------------------------------------------------------------------------------------(Paradigma Funcional)
 // Función para agregar una asignatura al horario (Paradigma Funcional)
 function addSubject() {
@@ -144,21 +147,47 @@ function addSubject() {
     const durationInput = document.getElementById('duration');
     const frequencyInput = document.getElementById('frequency');
     const dayRestritionInput = document.querySelectorAll('.dayRestriction:checked');
+    const professorSelect = document.getElementById('professorSelect');
+    // const studentsSelect = document.getElementById('studentsSelect');
 
     const name = subjectInput.value;
-    const professor = professorInput.value;
     const duration = parseInt(durationInput.value);
     const frequency = parseInt(frequencyInput.value);
+    const selectedProfessor = professorSelect.value; // Obtiene el valor del profesor seleccionado
+    // const selectedStudents = Array.from(studentsSelect.selectedOptions).map(option => option.value);
+    if (name === '') {
+        alert('Nombre requerido');
+        return;
+    }
+    if (isNaN(duration)) {
+        alert('Duración requerida');
+        return;
+    }
+    if (isNaN(frequency)) {
+        alert('Frecuencia requerida');
+        return;
+    }
+    if (selectedProfessor === '') {
+        alert('Profesor requerido');
+        return;
+    }
+
 
     let newSubject;
-    if(dayRestritionInput.length > 0){
-        newSubject = new SubjectWithDayRestriction(name, professor, duration, frequency);
-        for(let i = 0; i < dayRestritionInput.length; i++){
-            newSubject.addRestrictions(parseInt(dayRestritionInput[i].value))
-        }  
+    if (dayRestritionInput.length > 0) {
+        newSubject = new SubjectWithDayRestriction(name, selectedProfessor, duration, frequency);
+        for (let i = 0; i < dayRestritionInput.length; i++) {
+            newSubject.addRestrictions(parseInt(dayRestritionInput[i].value));
+        }
     } else {
-        newSubject = new Subject(name, professor, duration, frequency); 
+        newSubject = new Subject(name, selectedProfessor, duration, frequency);
     }
+
+// if (selectedStudents.length > 0) {
+//     selectedStudents.forEach(student => {
+//         newSubject.addStudent(student); // Agrega cada estudiante seleccionado a la asignatura
+//     });
+//}
 
     scheduleGenerator.addSubject(newSubject);
 }
@@ -170,9 +199,11 @@ function displaySubject(subject) {
     listItem.textContent = `${subject.name} - Profesor: ${subject.professor} - Duración: ${subject.duration} horas - Frecuencia: ${subject.frequency} veces por semana`;
 
     const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Eliminar';
-    //class="btn btn-primary mb-3" in DOMTokenList
-    deleteButton.className = 'btn btn-primary mb-3 mx-2';
+    deleteButton.textContent = 'X';
+    deleteButton.className = 'btn btn-link ml-2';
+    deleteButton.setAttribute('data-toggle', 'tooltip');
+    deleteButton.setAttribute('data-placement', 'top');
+    deleteButton.setAttribute('title', 'Eliminar');
 
     deleteButton.onclick = function () {
         // Lógica para eliminar la asignatura
@@ -228,6 +259,7 @@ function displayOptimalSchedule(timetable) {
     // Agrega la tabla al contenedor del diagrama de Gantt
     timetableChart.appendChild(table);
 }
+
 function toggleFields() {
     const personType = document.getElementById('personType').value;
     const professorFields = document.getElementById('professorFields');
@@ -251,17 +283,36 @@ function addPerson() {
     const name = personNameInput.value;
     const sex = personSexInput.value;
     const age = parseInt(personAgeInput.value);
-
+    if (name === '') {
+        alert('Nombre requerido');
+        return;
+    }
+    if (sex === '') {
+        alert('Sexo requerido');
+        return;
+    }
+    if (isNaN(age)) {
+        alert('Edad requerida');
+        return;
+    }
     let newPerson;
-
     if (personType === 'professor') {
         const categoryInput = document.getElementById('category');
         const category = categoryInput.value;
+        if (category === '') {
+            alert('Categoría requerida');
+            return;
+        }
         newPerson = new Professor(name, sex, age, category);
         displayPerson(newPerson, 'professorsList');
+        addProfessorToSelect(newPerson); // Agregar el nuevo profesor a la lista de opciones
     } else if (personType === 'student') {
         const averageInput = document.getElementById('average');
         const average = parseFloat(averageInput.value);
+        if (isNaN(average)) {
+            alert('Promedio requerido');
+            return;
+        }
         newPerson = new Student(name, sex, age, average);
         displayPerson(newPerson, 'studentsList');
     }
@@ -282,8 +333,40 @@ function displayPerson(person, listId) {
 
     listItem.textContent += additionalInfo;
     peopleList.appendChild(listItem);
+
+    let deleteButton = document.createElement('button');
+    deleteButton.textContent = 'X';
+    deleteButton.className = 'btn btn-link ml-2';
+    deleteButton.setAttribute('data-toggle', 'tooltip');
+    deleteButton.setAttribute('data-placement', 'top');
+    deleteButton.setAttribute('title', 'Eliminar');
+    deleteButton.onclick = function () {
+        // Lógica para eliminar la persona
+        const list = this.parentNode.parentNode;
+        list.removeChild(this.parentNode);
+    };
+
+    listItem.appendChild(deleteButton);
+    peopleList.appendChild(listItem);
 }
 
+// Función para agregar un profesor a la lista de opciones
+function addProfessorToSelect(professor) {
+    const professorSelect = document.getElementById('professorSelect');
+    const option = document.createElement('option');
+    option.value = professor.name;
+    option.textContent = professor.name;
+    professorSelect.appendChild(option);
+}
+
+// // Función para agregar un estudiante a la lista de opciones
+// function addStudentToSelect(student) {
+//     const studentsSelect = document.getElementById('studentsSelect');
+//     const option = document.createElement('option');
+//     option.value = student.name;
+//     option.textContent = student.name;
+//     studentsSelect.appendChild(option);
+// }
 
 
 // Ejemplo de uso
