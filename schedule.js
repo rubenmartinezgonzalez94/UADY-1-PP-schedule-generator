@@ -68,22 +68,26 @@ class ScheduleGenerator {
     // Método para generar el horario óptimo (Orientado a Objetos)
     generateSchedule() {
         const timetable = [];
+        const classPerDay = [];
         const sortedSubjects = this.schedule.sort((a, b) => b.duration - a.duration);
 
         sortedSubjects.forEach(subject => {
-            const scheduleDay = this.findAvailableSlot(timetable, subject);
+            const scheduleDay = this.findAvailableSlot(timetable, classPerDay, subject);
         });
 
         displayOptimalSchedule(timetable);
     }
 
-// Método para encontrar un espacio disponible en el horario para una asignatura (Orientado a Objetos)
-    findAvailableSlot(timetable, subject) {
+    // Método para encontrar un espacio disponible en el horario para una asignatura (Orientado a Objetos)
+    findAvailableSlot(timetable, classPerDay, subject) {
         let scheduleDay = []
         let frequency = 0
+        let maximumDailyClasses = 2;
+        console.log(classPerDay);
         for (let day = 0; day < 5; day++) { // Supongamos una semana de lunes a viernes
             if(frequency == subject.frequency) break;
-            if(subject.restrictions && subject.restrictions.includes(day)) continue //Verifica si el dia se encuentra restringido
+            if(subject.restrictions && subject.restrictions.includes(day)) continue; //Verifica si el dia se encuentra restringido
+            if(classPerDay[day] && classPerDay[day] >= maximumDailyClasses) continue; // Verifica cuantas clases hay en el dia
             for (let hour = 8; hour < 17 - subject.duration + 1; hour++) { // Modificamos el límite a 5 PM
                 if (!this.isSlotOccupied(timetable, day, hour, subject.duration)) {
                     frequency++;
@@ -95,7 +99,7 @@ class ScheduleGenerator {
 
         if(frequency == subject.frequency){
             for(let i = 0; i < scheduleDay.length; i++){
-                this.scheduleClass(timetable, subject, scheduleDay[i][0], scheduleDay[i][1]);
+                this.scheduleClass(timetable, classPerDay, subject, scheduleDay[i][0], scheduleDay[i][1]);
             }
             
             return scheduleDay;
@@ -116,10 +120,17 @@ class ScheduleGenerator {
 
 
     // Método para programar una asignatura en el horario
-    scheduleClass(timetable, subject, day, hour) {
+    scheduleClass(timetable, classPerDay, subject, day, hour) {
         if (!timetable[day]) {
             timetable[day] = [];
         }
+
+        if (!classPerDay[day]) {
+            classPerDay[day] = 0;
+        }
+
+        classPerDay[day] = classPerDay[day] + 1;
+
         for (let j = 0; j < subject.duration; j++) {
             timetable[day][hour + j] = subject.name;
         }
