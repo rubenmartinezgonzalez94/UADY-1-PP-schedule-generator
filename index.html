@@ -73,6 +73,32 @@
                 <label for="frequency">Frecuencia (veces por semana):</label>
                 <input type="number" class="form-control" id="frequency">
             </div>
+            <div class="form-group">
+                <label>Dias restringidos:</label>
+                <div class="d-block">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input dayRestriction" type="checkbox" id="dayMondayRestriction" value="0">
+                        <label class="form-check-label" for="dayMondayRestriction">L</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input dayRestriction" type="checkbox" id="dayTuesdayRestriction" value="1">
+                        <label class="form-check-label" for="dayTuesdayRestriction">M</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input dayRestriction" type="checkbox" id="dayWednessdayRestriction" value="2">
+                        <label class="form-check-label" for="dayWednessdayRestriction">M</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input dayRestriction" type="checkbox" id="dayThursdayRestriction" value="3">
+                        <label class="form-check-label" for="dayThursdayRestriction">J</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input dayRestriction" type="checkbox" id="dayFridayRestriction" value="4">
+                        <label class="form-check-label" for="dayFridayRestriction">V</label>
+                    </div>
+                </div>
+                
+            </div>
 
             <button class="btn btn-primary mb-3" onclick="addSubject()">Agregar Asignatura</button>
 
@@ -83,19 +109,19 @@
                 <!-- List of added subjects -->
             </ul>
             <h4>Lista de Profesores</h4>
-            <ul id="professorsList" class="list-group">
+            <ul id="professorsList" class="list-group mt-4">
                 <!-- List of added professors -->
             </ul>
 
             <h4>Lista de Estudiantes</h4>
-            <ul id="studentsList" class="list-group">
+            <ul id="studentsList" class="list-group mt-4">
                 <!-- List of added students -->
             </ul>
         </div>
-        <div class="col-md-5 border border-primary m-1 p-3" style="background-color: #15b5c645">
+        <div class="col-md-6 border border-primary m-1 p-3" style="background-color: #15b5c645">
             <!-- Schedule Display -->
             <button class="btn btn-primary mb-3" onclick="generateOptimalSchedule()">Generar Horario</button>
-            <div id="timetableChart" class="table-responsive">
+            <div id="timetableChart" class="table table-responsive table-dark">
                 <!-- Schedule will be displayed here -->
             </div>
         </div>

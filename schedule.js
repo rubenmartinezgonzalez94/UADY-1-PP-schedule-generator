@@ -27,10 +27,29 @@ class Subject {
         this.duration = duration;
         this.frequency = frequency;
         this.students = [];
+        this.restrictionType = 'None'
+        this.restrictions = null
     }
 
     addStudent(student) {
         this.students.push(student);
+    }
+
+    addRestrictions(restriction){
+        return this.restrictions;
+    }
+}
+
+class SubjectWithDayRestriction extends Subject {
+    constructor(name, professor, duration, frequency) {
+        super(name, professor, duration, frequency);
+        this.restrictionType = 'Day'
+        this.restrictions = []
+    }
+
+    addRestrictions(restriction){
+        this.restrictions.push(restriction);
+        return this.restrictions;
     }
 }
 
@@ -52,10 +71,7 @@ class ScheduleGenerator {
         const sortedSubjects = this.schedule.sort((a, b) => b.duration - a.duration);
 
         sortedSubjects.forEach(subject => {
-            const slot = this.findAvailableSlot(timetable, subject);
-            if (slot !== -1) {
-                this.scheduleClass(timetable, subject, slot);
-            }
+            const scheduleDay = this.findAvailableSlot(timetable, subject);
         });
 
         displayOptimalSchedule(timetable);
@@ -63,29 +79,36 @@ class ScheduleGenerator {
 
 // Método para encontrar un espacio disponible en el horario para una asignatura (Orientado a Objetos)
     findAvailableSlot(timetable, subject) {
+        let scheduleDay = []
+        let frequency = 0
         for (let day = 0; day < 5; day++) { // Supongamos una semana de lunes a viernes
-            let dailyClasses = 0; // Contador para el número diario de clases
+            if(frequency == subject.frequency) break;
+            if(subject.restrictions && subject.restrictions.includes(day)) continue //Verifica si el dia se encuentra restringido
             for (let hour = 8; hour < 17 - subject.duration + 1; hour++) { // Modificamos el límite a 5 PM
-                if (!this.isSlotOccupied(timetable, day, hour, subject.duration, subject.frequency)) {
-                    dailyClasses++;
-                    if (dailyClasses === 2) { // Limitar a 2 clases por día
-                        const slot = { day, hour };
-                        this.scheduleClass(timetable, subject, slot);
-                        return slot;
-                    }
+                if (!this.isSlotOccupied(timetable, day, hour, subject.duration)) {
+                    frequency++;
+                    scheduleDay.push([day, hour])
+                    break;
                 }
             }
         }
-        return -1;
+
+        if(frequency == subject.frequency){
+            for(let i = 0; i < scheduleDay.length; i++){
+                this.scheduleClass(timetable, subject, scheduleDay[i][0], scheduleDay[i][1]);
+            }
+            
+            return scheduleDay;
+        } else{
+            return -1;
+        }
     }
 
 // Método para verificar si un espacio en el horario está ocupado
-    isSlotOccupied(timetable, day, hour, duration, frequency) {
+    isSlotOccupied(timetable, day, hour, duration) {
         for (let i = 0; i < duration; i++) {
-            for (let j = 0; j < frequency; j++) {
-                if (timetable[day + j] && timetable[day + j][hour + i] && (hour + i >= 8 && hour + i < 17)) {
-                    return true;
-                }
+            if (timetable[day] && timetable[day][hour + i] && (hour + i >= 8 && hour + i < 17)) {
+                return true;
             }
         }
         return false;
@@ -93,15 +116,12 @@ class ScheduleGenerator {
 
 
     // Método para programar una asignatura en el horario
-    scheduleClass(timetable, subject, slot) {
-        const { day, hour } = slot;
-        for (let i = 0; i < subject.frequency; i++) {
-            if (!timetable[day + i]) {
-                timetable[day + i] = [];
-            }
-            for (let j = 0; j < subject.duration; j++) {
-                timetable[day + i][hour + j] = subject.name;
-            }
+    scheduleClass(timetable, subject, day, hour) {
+        if (!timetable[day]) {
+            timetable[day] = [];
+        }
+        for (let j = 0; j < subject.duration; j++) {
+            timetable[day][hour + j] = subject.name;
         }
     }
 }
@@ -112,13 +132,22 @@ function addSubject() {
     const professorInput = document.getElementById('professor');
     const durationInput = document.getElementById('duration');
     const frequencyInput = document.getElementById('frequency');
+    const dayRestritionInput = document.querySelectorAll('.dayRestriction:checked');
 
     const name = subjectInput.value;
     const professor = professorInput.value;
     const duration = parseInt(durationInput.value);
     const frequency = parseInt(frequencyInput.value);
 
-    const newSubject = new Subject(name, professor, duration, frequency);
+    let newSubject;
+    if(dayRestritionInput.length > 0){
+        newSubject = new SubjectWithDayRestriction(name, professor, duration, frequency);
+        for(let i = 0; i < dayRestritionInput.length; i++){
+            newSubject.addRestrictions(parseInt(dayRestritionInput[i].value))
+        }  
+    } else {
+        newSubject = new Subject(name, professor, duration, frequency); 
+    }
 
     scheduleGenerator.addSubject(newSubject);
 }
@@ -132,7 +161,7 @@ function displaySubject(subject) {
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Eliminar';
     //class="btn btn-primary mb-3" in DOMTokenList
-    deleteButton.class = 'btn btn-primary mb-3';
+    deleteButton.className = 'btn btn-primary mb-3 mx-2';
 
     deleteButton.onclick = function () {
         // Lógica para eliminar la asignatura
