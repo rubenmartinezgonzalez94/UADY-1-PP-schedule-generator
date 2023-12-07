@@ -71,12 +71,16 @@
                     <!-- Opciones generadas dinámicamente con JavaScript -->
                 </select>
             </div>
-<!--            <div class="form-group">-->
-<!--                <label for="studentsSelect">Estudiantes:</label>-->
-<!--                <select class="form-control" id="studentsSelect" multiple>-->
-<!--                    &lt;!&ndash; Opciones generadas dinámicamente con JavaScript &ndash;&gt;-->
-<!--                </select>-->
-<!--            </div>-->
+            <div class="form-group">
+                <label for="studentsPicker">Estudiantes:</label>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle bg-light" type="button" id="studentsPickerDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Escoger estudiantes
+                    </button>
+                    <div class="dropdown-menu" id="studentsPicker" aria-labelledby="studentsPickerDropdown">
+                    </div>
+                </div>
+           </div>
             <div class="form-group">
                 <label for="duration">Duración (horas):</label>
                 <input type="number" class="form-control" id="duration">
@@ -138,15 +142,44 @@
             </div>
         </div>
     </div>
-    <div>
-
-    </div>
 </div>
+
+<div class="modal fade" id="modalStudent" tabindex="-1" role="dialog" aria-labelledby="modalStudent" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalStudentTitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-responsive table-dark">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Sexo</th>
+                        <th>Edad</th>
+                        <th>Promedio</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!-- Bootstrap JS and Custom JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>
 <script src="schedule.js"></script>
 </body>
 

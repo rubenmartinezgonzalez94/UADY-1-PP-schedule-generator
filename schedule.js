@@ -134,7 +134,7 @@ class ScheduleGenerator {
         classPerDay[day] = classPerDay[day] + 1;
 
         for (let j = 0; j < subject.duration; j++) {
-            timetable[day][hour + j] = subject.name;
+            timetable[day][hour + j] = subject;
         }
     }
 }
@@ -148,13 +148,13 @@ function addSubject() {
     const frequencyInput = document.getElementById('frequency');
     const dayRestritionInput = document.querySelectorAll('.dayRestriction:checked');
     const professorSelect = document.getElementById('professorSelect');
-    // const studentsSelect = document.getElementById('studentsSelect');
+    const studentsSelect = document.querySelectorAll('.studentCheckbox:checked');
 
     const name = subjectInput.value;
     const duration = parseInt(durationInput.value);
     const frequency = parseInt(frequencyInput.value);
     const selectedProfessor = professorSelect.value; // Obtiene el valor del profesor seleccionado
-    // const selectedStudents = Array.from(studentsSelect.selectedOptions).map(option => option.value);
+    
     if (name === '') {
         alert('Nombre requerido');
         return;
@@ -172,6 +172,10 @@ function addSubject() {
         return;
     }
 
+    if(studentsSelect.length == 0){
+        alert('Estudiantes requeridos');
+        return;
+    }
 
     let newSubject;
     if (dayRestritionInput.length > 0) {
@@ -183,11 +187,10 @@ function addSubject() {
         newSubject = new Subject(name, selectedProfessor, duration, frequency);
     }
 
-// if (selectedStudents.length > 0) {
-//     selectedStudents.forEach(student => {
-//         newSubject.addStudent(student); // Agrega cada estudiante seleccionado a la asignatura
-//     });
-//}
+    studentsSelect.forEach(student => {
+        id = student.parentNode.id.split('-')[1];
+        newSubject.addStudent(studentsList[id]); // Agrega cada estudiante seleccionado a la asignatura
+    });
 
     scheduleGenerator.addSubject(newSubject);
 }
@@ -242,18 +245,41 @@ function displayOptimalSchedule(timetable) {
     table.innerHTML += headerRow;
 
     // Crea las filas para cada hora y asignatura en el horario
+    let row, col;
     for (let hour = 8; hour <= 17; hour++) {
-        let row = `<tr><td>${hour}:00</td>`;
+        row = document.createElement('tr');
+        col = document.createElement('td');
+        col.innerHTML = `${hour}:00`;
+        row.appendChild(col);
         for (let day = 0; day < 5; day++) {
             if (timetable[day] && timetable[day][hour]) {
                 const subject = timetable[day][hour];
-                row += `<td>${subject}</td>`;
+                col = document.createElement('td');
+                col.innerHTML = subject.name;
+
+                col.onclick = function(){
+                    $('#modalStudent').modal('toggle');
+                    $('#modalStudentTitle').html(`Estudiantes de ${subject.name}`);
+                    $('#modalStudent .modal-body table tbody').html('');
+                    subject.students.forEach(student => {
+                        html = $('#modalStudent .modal-body table tbody').html();
+                        html += `<tr>
+                                    <td>${student.name}</td>
+                                    <td>${student.sex}</td>
+                                    <td>${student.age}</td>
+                                    <td>${student.average}</td>
+                                 </tr>`;
+                        $('#modalStudent .modal-body table tbody').html(html)
+                    });
+                }
+
+                row.appendChild(col);
             } else {
-                row += '<td></td>';
+                col = document.createElement('td');
+                row.appendChild(col);
             }
         }
-        row += '</tr>';
-        table.innerHTML += row;
+        table.appendChild(row);
     }
 
     // Agrega la tabla al contenedor del diagrama de Gantt
@@ -306,6 +332,7 @@ function addPerson() {
         newPerson = new Professor(name, sex, age, category);
         displayPerson(newPerson, 'professorsList');
         addProfessorToSelect(newPerson); // Agregar el nuevo profesor a la lista de opciones
+        profesorIdentificator += 1;
     } else if (personType === 'student') {
         const averageInput = document.getElementById('average');
         const average = parseFloat(averageInput.value);
@@ -315,6 +342,8 @@ function addPerson() {
         }
         newPerson = new Student(name, sex, age, average);
         displayPerson(newPerson, 'studentsList');
+        addStudentToSelect(newPerson); // Agregar el nuevo estudiante a la lista de opciones
+        studentIdentificator += 1;
     }
 }
 
@@ -323,16 +352,18 @@ function displayPerson(person, listId) {
     const listItem = document.createElement('li');
     let additionalInfo = '';
 
+    
     listItem.textContent = `Nombre: ${person.name} - Edad: ${person.age} - Sexo: ${person.sex}`;
 
     if (person instanceof Professor) {
+        listItem.id = 'display-professor-' + profesorIdentificator;
         additionalInfo += ` - Profesor - Categoría: ${person.category}`;
     } else if (person instanceof Student) {
+        listItem.id = 'display-student-' + studentIdentificator;
         additionalInfo += ` - Estudiante - Promedio: ${person.average}`;
     }
 
     listItem.textContent += additionalInfo;
-    peopleList.appendChild(listItem);
 
     let deleteButton = document.createElement('button');
     deleteButton.textContent = 'X';
@@ -340,10 +371,16 @@ function displayPerson(person, listId) {
     deleteButton.setAttribute('data-toggle', 'tooltip');
     deleteButton.setAttribute('data-placement', 'top');
     deleteButton.setAttribute('title', 'Eliminar');
+
     deleteButton.onclick = function () {
         // Lógica para eliminar la persona
         const list = this.parentNode.parentNode;
-        list.removeChild(this.parentNode);
+        const idSlices = this.parentNode.id.split('-');
+
+        personId = idSlices[1] + '-' + idSlices[2];
+        document.getElementById(personId).remove()
+
+        list.removeChild(this.parentNode);  
     };
 
     listItem.appendChild(deleteButton);
@@ -356,19 +393,28 @@ function addProfessorToSelect(professor) {
     const option = document.createElement('option');
     option.value = professor.name;
     option.textContent = professor.name;
+    option.id = 'professor-' + profesorIdentificator;
     professorSelect.appendChild(option);
 }
 
-// // Función para agregar un estudiante a la lista de opciones
-// function addStudentToSelect(student) {
-//     const studentsSelect = document.getElementById('studentsSelect');
-//     const option = document.createElement('option');
-//     option.value = student.name;
-//     option.textContent = student.name;
-//     studentsSelect.appendChild(option);
-// }
+// Función para agregar un estudiante a la lista de opciones
+function addStudentToSelect(student) {
+    const studentsPicker = document.getElementById('studentsPicker');
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.value = student.name;
+    checkbox.type = 'checkbox';
+    checkbox.className = 'studentCheckbox';
+    label.appendChild(checkbox);
+    label.innerHTML += ' ' + student.name;
+    label.className = 'w-100 pl-4';
+    label.id = 'student-' + studentIdentificator;
+    studentsPicker.appendChild(label);
+    studentsList[studentIdentificator] = student;
+ }
 
-
-// Ejemplo de uso
+// Inicializacion
 const scheduleGenerator = new ScheduleGenerator();
-console.log("Debugeando")
+let studentIdentificator = 0
+let profesorIdentificator = 0;
+let studentsList = {};
